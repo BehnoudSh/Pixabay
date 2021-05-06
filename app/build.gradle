@@ -95,8 +95,8 @@ dependencies {
 
 
     //rxjava
-    implementation "io.reactivex.rxjava2:rxandroid:$rxJavaVersion"
-    implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
+//    implementation "io.reactivex.rxjava2:rxandroid:$rxJavaVersion"
+//    implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
 
     //dagger
     implementation "com.google.dagger:dagger:$dagger_version"
