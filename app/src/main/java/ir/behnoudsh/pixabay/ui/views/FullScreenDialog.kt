@@ -16,7 +16,7 @@ import ir.behnoudsh.pixabay.domain.model.PixabayImageItem
 import kotlinx.android.synthetic.main.dialog_image_details.*
 import kotlinx.android.synthetic.main.dialog_image_details.tv_user
 
-class PlaceDetailsDialog(var model: PixabayImageItem) :
+class ImageDetailsDialog(var model: PixabayImageItem) :
     DialogFragment() {
 
 

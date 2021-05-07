@@ -2,11 +2,9 @@ package ir.behnoudsh.pixabay.ui.views
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.View
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import ir.behnoudsh.pixabay.R
 import ir.behnoudsh.pixabay.domain.model.PixabayImageItem
 import ir.behnoudsh.pixabay.ui.adapters.CellClickListener
@@ -18,6 +16,7 @@ class MainActivity : AppCompatActivity(), CellClickListener {
     private lateinit var imagesViewModel: ImagesViewModel
     val imagesAdapter = ImagesAdapter(this, ArrayList(), this)
     var isLoading = false
+    var page: Int = 1;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +25,13 @@ class MainActivity : AppCompatActivity(), CellClickListener {
         registerObservers()
         initRecyclerView()
 
-        imagesViewModel.getAllImages("fruits", 2)
+        imagesViewModel.getAllImages("fruits", page)
+
+        iv_search.setOnClickListener {
+
+            imagesViewModel.getAllImages(et_searchword.text.toString(), page)
+
+        }
     }
 
     fun initRecyclerView() {
@@ -54,6 +59,8 @@ class MainActivity : AppCompatActivity(), CellClickListener {
 
     fun registerObservers() {
         imagesViewModel.imagesSuccessLiveData.observe(this, {
+            if (page == 1)
+                imagesAdapter.imagesList.clear()
             for (item in it) {
                 imagesAdapter.imagesList.add(item)
             }
@@ -71,7 +78,7 @@ class MainActivity : AppCompatActivity(), CellClickListener {
     override fun onCellClickListener(image: PixabayImageItem) {
 
 
-        val dialogFragment = PlaceDetailsDialog(image)
+        val dialogFragment = ImageDetailsDialog(image)
         dialogFragment.show(supportFragmentManager, "imageDetails")
 
     }

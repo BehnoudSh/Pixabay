@@ -1,15 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_searchzone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_search"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_loupe" />
+
+        <EditText
+            android:id="@+id/et_searchword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="search image"
+            android:imeOptions="actionSearch"
+            android:maxLines="1"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_imagesList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/pb_loading" />
+        android:layout_above="@+id/pb_loading"
+        android:layout_below="@+id/ll_searchzone" />
 
     <ProgressBar
         android:id="@+id/pb_loading"
