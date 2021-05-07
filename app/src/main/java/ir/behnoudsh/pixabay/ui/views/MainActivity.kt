@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity(), CellClickListener {
         registerObservers()
         initRecyclerView()
 
-        imagesViewModel.getAllImages("fruits", 1)
+        imagesViewModel.getAllImages("fruits", 2)
     }
 
     fun initRecyclerView() {
@@ -68,7 +68,12 @@ class MainActivity : AppCompatActivity(), CellClickListener {
         })
     }
 
-    override fun onCellClickListener(place: PixabayImageItem) {
+    override fun onCellClickListener(image: PixabayImageItem) {
+
+
+        val dialogFragment = PlaceDetailsDialog(image)
+        dialogFragment.show(supportFragmentManager, "imageDetails")
+
     }
 
 }
