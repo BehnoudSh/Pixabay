@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ir.behnoudsh.pixabay.R
 import ir.behnoudsh.pixabay.domain.model.PixabayImageItem
 import ir.behnoudsh.pixabay.ui.adapters.CellClickListener
@@ -21,7 +22,9 @@ class MainActivity : AppCompatActivity(), CellClickListener {
     @Inject
     val imagesAdapter: ImagesAdapter = ImagesAdapter(this, ArrayList(), this)
 
-    var page: Int = 1;
+    var page: Int = 1
+
+    var isLoading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,9 +32,9 @@ class MainActivity : AppCompatActivity(), CellClickListener {
         imagesViewModel = ViewModelProviders.of(this).get(ImagesViewModel::class.java)
         registerObservers()
         initRecyclerView()
-        imagesViewModel.getAllImages("fruits", page)
-
+        imagesViewModel.getAllImages(et_searchword.text.toString(), page)
         iv_search.setOnClickListener {
+            page = 1
             imagesViewModel.getAllImages(et_searchword.text.toString(), page)
         }
     }
@@ -39,28 +42,30 @@ class MainActivity : AppCompatActivity(), CellClickListener {
     fun initRecyclerView() {
         rv_imagesList.layoutManager = LinearLayoutManager(this)
         rv_imagesList.adapter = imagesAdapter
-//        initScrollListener()
+        initScrollListener()
     }
 
-//    private fun initScrollListener() {
-//        rv_imagesList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                super.onScrolled(recyclerView, dx, dy)
-//                val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager?
-//                if (!isLoading) {
-//                    if (linearLayoutManager != null &&
-//                        linearLayoutManager.findLastCompletelyVisibleItemPosition() == rv_imagesList.adapter!!.itemCount - 1
-//                    ) {
-//                      //  placesViewModel.loadMore()
-//                        isLoading = true
-//                    }
-//                }
-//            }
-//        })
-//    }
+    private fun initScrollListener() {
+        rv_imagesList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager?
+                if (!isLoading) {
+                    if (linearLayoutManager != null &&
+                        linearLayoutManager.findLastCompletelyVisibleItemPosition() == rv_imagesList.adapter!!.itemCount - 5
+                    ) {
+                        page++
+                        imagesViewModel.getAllImages(et_searchword.text.toString(), page)
+                        isLoading = true
+                    }
+                }
+            }
+        })
+    }
 
     fun registerObservers() {
         imagesViewModel.imagesSuccessLiveData.observe(this, {
+            isLoading = false
             if (page == 1)
                 imagesAdapter.imagesList.clear()
             for (item in it) {
@@ -70,6 +75,7 @@ class MainActivity : AppCompatActivity(), CellClickListener {
             pb_loading.visibility = View.GONE
         })
         imagesViewModel.imagesFailureLiveData.observe(this, {
+            isLoading = false
             pb_loading.visibility = View.GONE
         })
         imagesViewModel.loadingLiveData?.observe(this, {
