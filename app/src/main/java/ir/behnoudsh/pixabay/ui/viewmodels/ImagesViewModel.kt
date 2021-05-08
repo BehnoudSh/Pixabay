@@ -9,6 +9,11 @@ import kotlinx.coroutines.launch
 
 class ImagesViewModel : ViewModel() {
 
+
+
+
+
+
     var loadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val imagesRepository: ImagesRepository = ImagesRepository()
     val imagesSuccessLiveData = imagesRepository.getImagesSuccessLiveData

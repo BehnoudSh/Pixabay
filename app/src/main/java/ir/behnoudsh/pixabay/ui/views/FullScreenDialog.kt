@@ -1,20 +1,14 @@
 package ir.behnoudsh.pixabay.ui.views
 
-import android.app.Activity
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import ir.behnoudsh.pixabay.R
 import ir.behnoudsh.pixabay.domain.model.PixabayImageItem
 import kotlinx.android.synthetic.main.dialog_image_details.*
-import kotlinx.android.synthetic.main.dialog_image_details.tv_user
 
 class ImageDetailsDialog(var model: PixabayImageItem) :
     DialogFragment() {
