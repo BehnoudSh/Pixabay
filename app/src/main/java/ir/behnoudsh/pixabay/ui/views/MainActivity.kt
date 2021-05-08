@@ -11,11 +11,16 @@ import ir.behnoudsh.pixabay.ui.adapters.CellClickListener
 import ir.behnoudsh.pixabay.ui.adapters.ImagesAdapter
 import ir.behnoudsh.pixabay.ui.viewmodels.ImagesViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), CellClickListener {
-    private lateinit var imagesViewModel: ImagesViewModel
-    val imagesAdapter = ImagesAdapter(this, ArrayList(), this)
-    var isLoading = false
+
+    @Inject
+    var imagesViewModel: ImagesViewModel = ImagesViewModel()
+
+    @Inject
+    val imagesAdapter: ImagesAdapter = ImagesAdapter(this, ArrayList(), this)
+
     var page: Int = 1;
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,13 +29,10 @@ class MainActivity : AppCompatActivity(), CellClickListener {
         imagesViewModel = ViewModelProviders.of(this).get(ImagesViewModel::class.java)
         registerObservers()
         initRecyclerView()
-
         imagesViewModel.getAllImages("fruits", page)
 
         iv_search.setOnClickListener {
-
             imagesViewModel.getAllImages(et_searchword.text.toString(), page)
-
         }
     }
 
@@ -76,11 +78,7 @@ class MainActivity : AppCompatActivity(), CellClickListener {
     }
 
     override fun onCellClickListener(image: PixabayImageItem) {
-
-
         val dialogFragment = ImageDetailsDialog(image)
         dialogFragment.show(supportFragmentManager, "imageDetails")
-
     }
-
 }
