@@ -41,8 +41,6 @@ class MainActivity : AppCompatActivity(), CellClickListener {
         registerObservers()
         initRecyclerView()
         imagesViewModel.getAllImages("fruits", page)
-        et_searchword.setText("fruits")
-
     }
 
     fun initRecyclerView() {
