@@ -1,42 +1,48 @@
 package ir.behnoudsh.pixabay.ui.views
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ir.behnoudsh.pixabay.R
+import ir.behnoudsh.pixabay.databinding.ActivityMainBinding
 import ir.behnoudsh.pixabay.domain.model.PixabayImageItem
 import ir.behnoudsh.pixabay.ui.adapters.CellClickListener
 import ir.behnoudsh.pixabay.ui.adapters.ImagesAdapter
 import ir.behnoudsh.pixabay.ui.viewmodels.ImagesViewModel
+import ir.behnoudsh.pixabay.ui.viewmodels.ImagesViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), CellClickListener {
+
+    private lateinit var databinding: ActivityMainBinding
 
     @Inject
     var imagesViewModel: ImagesViewModel = ImagesViewModel()
 
     @Inject
     val imagesAdapter: ImagesAdapter = ImagesAdapter(this, ArrayList(), this)
-
     var page: Int = 1
-
     var isLoading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        imagesViewModel = ViewModelProviders.of(this).get(ImagesViewModel::class.java)
+        databinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        val factory = ImagesViewModelFactory()
+        imagesViewModel = ViewModelProviders.of(this, factory)
+            .get(ImagesViewModel::class.java)
+
+        databinding.imagesViewModel = imagesViewModel
+        databinding.lifecycleOwner = this
         registerObservers()
         initRecyclerView()
-        imagesViewModel.getAllImages(et_searchword.text.toString(), page)
-        iv_search.setOnClickListener {
-            page = 1
-            imagesViewModel.getAllImages(et_searchword.text.toString(), page)
-        }
+        imagesViewModel.getAllImages("fruits", page)
+        et_searchword.setText("fruits")
+
     }
 
     fun initRecyclerView() {
@@ -66,8 +72,6 @@ class MainActivity : AppCompatActivity(), CellClickListener {
     fun registerObservers() {
         imagesViewModel.imagesSuccessLiveData.observe(this, {
             isLoading = false
-            if (page == 1)
-                imagesAdapter.imagesList.clear()
             for (item in it) {
                 imagesAdapter.imagesList.add(item)
             }
@@ -81,6 +85,11 @@ class MainActivity : AppCompatActivity(), CellClickListener {
         imagesViewModel.loadingLiveData?.observe(this, {
             pb_loading.visibility = View.VISIBLE
         })
+        imagesViewModel.resetPage?.observe(this, {
+            page = 1
+            imagesAdapter.imagesList.clear()
+        })
+
     }
 
     override fun onCellClickListener(image: PixabayImageItem) {
