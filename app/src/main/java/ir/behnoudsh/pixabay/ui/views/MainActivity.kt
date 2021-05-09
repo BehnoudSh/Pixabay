@@ -2,6 +2,7 @@ package ir.behnoudsh.pixabay.ui.views
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
@@ -91,7 +92,21 @@ class MainActivity : AppCompatActivity(), CellClickListener {
     }
 
     override fun onCellClickListener(image: PixabayImageItem) {
-        val dialogFragment = ImageDetailsDialog(image)
-        dialogFragment.show(supportFragmentManager, "imageDetails")
+
+
+        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this)
+
+        alertDialog.setMessage("Do you want to see the details?")// for Message
+        alertDialog.setPositiveButton("Yes") { dialog, id ->
+            val dialogFragment = ImageDetailsDialog(image)
+            dialogFragment.show(supportFragmentManager, "imageDetails")
+        }
+        alertDialog.setNegativeButton("Cancel") { dialog, id ->
+
+        }
+
+        val alert = alertDialog.create()
+        alert.setCanceledOnTouchOutside(false)
+        alert.show()
     }
 }
