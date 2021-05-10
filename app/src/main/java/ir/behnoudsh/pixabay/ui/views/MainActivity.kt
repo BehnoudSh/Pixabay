@@ -110,19 +110,16 @@ class MainActivity : AppCompatActivity(), CellClickListener {
     fun onSNACK(view: View, message: String) {
         val snackbar = Snackbar.make(
             view, message,
-            Snackbar.LENGTH_LONG
+            Snackbar.LENGTH_INDEFINITE
         ).setAction("retry") {
 
             imagesViewModel.getAllImages(et_searchword.text.toString(), page)
 
         }
-        snackbar.setActionTextColor(Color.BLUE)
         val snackbarView = snackbar.view
-        snackbarView.setBackgroundColor(Color.LTGRAY)
         val textView =
             snackbarView.findViewById(com.google.android.material.R.id.snackbar_text) as TextView
-        textView.setTextColor(Color.BLUE)
-        textView.textSize = 28f
+        textView.textSize = 14f
         snackbar.show()
     }
 }
