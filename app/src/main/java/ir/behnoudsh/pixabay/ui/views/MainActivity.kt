@@ -1,13 +1,16 @@
 package ir.behnoudsh.pixabay.ui.views
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import ir.behnoudsh.pixabay.R
 import ir.behnoudsh.pixabay.databinding.ActivityMainBinding
 import ir.behnoudsh.pixabay.domain.model.PixabayImageItem
@@ -36,7 +39,6 @@ class MainActivity : AppCompatActivity(), CellClickListener {
         val factory = ImagesViewModelFactory()
         imagesViewModel = ViewModelProviders.of(this, factory)
             .get(ImagesViewModel::class.java)
-
         databinding.imagesViewModel = imagesViewModel
         databinding.lifecycleOwner = this
         registerObservers()
@@ -80,6 +82,7 @@ class MainActivity : AppCompatActivity(), CellClickListener {
         imagesViewModel.imagesFailureLiveData.observe(this, {
             isLoading = false
             pb_loading.visibility = View.GONE
+            onSNACK(content, "Error: check internet connection and try again!")
         })
         imagesViewModel.loadingLiveData?.observe(this, {
             pb_loading.visibility = View.VISIBLE
@@ -88,25 +91,38 @@ class MainActivity : AppCompatActivity(), CellClickListener {
             page = 1
             imagesAdapter.imagesList.clear()
         })
-
     }
 
     override fun onCellClickListener(image: PixabayImageItem) {
-
-
         val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this)
-
         alertDialog.setMessage("Do you want to see the details?")// for Message
         alertDialog.setPositiveButton("Yes") { dialog, id ->
             val dialogFragment = ImageDetailsDialog(image)
             dialogFragment.show(supportFragmentManager, "imageDetails")
         }
         alertDialog.setNegativeButton("Cancel") { dialog, id ->
-
         }
-
         val alert = alertDialog.create()
         alert.setCanceledOnTouchOutside(false)
         alert.show()
+    }
+
+    fun onSNACK(view: View, message: String) {
+        val snackbar = Snackbar.make(
+            view, message,
+            Snackbar.LENGTH_LONG
+        ).setAction("retry") {
+
+            imagesViewModel.getAllImages(et_searchword.text.toString(), page)
+
+        }
+        snackbar.setActionTextColor(Color.BLUE)
+        val snackbarView = snackbar.view
+        snackbarView.setBackgroundColor(Color.LTGRAY)
+        val textView =
+            snackbarView.findViewById(com.google.android.material.R.id.snackbar_text) as TextView
+        textView.setTextColor(Color.BLUE)
+        textView.textSize = 28f
+        snackbar.show()
     }
 }
