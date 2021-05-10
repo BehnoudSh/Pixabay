@@ -1,8 +1,9 @@
 package ir.behnoudsh.pixabay.ui.views
 
-import android.graphics.Color
+
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity(), CellClickListener {
     private lateinit var databinding: ActivityMainBinding
 
     @Inject
-    var imagesViewModel: ImagesViewModel = ImagesViewModel()
+    private lateinit var imagesViewModel: ImagesViewModel
 
     @Inject
     val imagesAdapter: ImagesAdapter = ImagesAdapter(this, ArrayList(), this)
@@ -44,6 +45,15 @@ class MainActivity : AppCompatActivity(), CellClickListener {
         registerObservers()
         initRecyclerView()
         imagesViewModel.getAllImages("fruits", page)
+        et_searchword.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                page = 1
+                imagesViewModel.getAllImages(et_searchword.text.toString(), page)
+                true
+            } else {
+                false
+            }
+        }
     }
 
     fun initRecyclerView() {
@@ -73,18 +83,23 @@ class MainActivity : AppCompatActivity(), CellClickListener {
     fun registerObservers() {
         imagesViewModel.imagesSuccessLiveData.observe(this, {
             isLoading = false
+            pb_loading.visibility = View.GONE
             for (item in it) {
                 imagesAdapter.imagesList.add(item)
             }
             imagesAdapter.notifyDataSetChanged()
-            pb_loading.visibility = View.GONE
+            if (it.size == 0 && page == 1) {
+                ll_noResults.visibility = View.VISIBLE
+            } else
+                ll_noResults.visibility = View.GONE
         })
         imagesViewModel.imagesFailureLiveData.observe(this, {
             isLoading = false
             pb_loading.visibility = View.GONE
+
             onSNACK(content, "Error: check internet connection and try again!")
         })
-        imagesViewModel.loadingLiveData?.observe(this, {
+        imagesViewModel.showloadingLiveData?.observe(this, {
             pb_loading.visibility = View.VISIBLE
         })
         imagesViewModel.resetPage?.observe(this, {
@@ -122,4 +137,6 @@ class MainActivity : AppCompatActivity(), CellClickListener {
         textView.textSize = 14f
         snackbar.show()
     }
+
+
 }

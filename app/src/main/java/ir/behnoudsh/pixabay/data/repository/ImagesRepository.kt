@@ -11,7 +11,6 @@ class ImagesRepository {
 
     @Inject
     lateinit var retrofit: ApiClient
-
     val getImagesSuccessLiveData = MutableLiveData<ArrayList<PixabayImageItem>>()
     val getImagesFailureLiveData = MutableLiveData<Boolean>()
 

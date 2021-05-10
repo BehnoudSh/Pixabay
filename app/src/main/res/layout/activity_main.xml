@@ -5,15 +5,11 @@
         <variable
             name="ImagesViewModel"
             type="ir.behnoudsh.pixabay.ui.viewmodels.ImagesViewModel" />
-
-<!--        <import type="android.view.View" />-->
-
-
     </data>
 
     <RelativeLayout
-        android:layout_width="match_parent"
         android:id="@+id/content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
@@ -40,7 +36,7 @@
                 android:hint="search image"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
-                android:maxLines="1"
+                android:singleLine="true"
                 android:text="@={ImagesViewModel.searchWord}"
                 android:textColor="@color/black" />
 
@@ -60,6 +56,30 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/ll_noResults"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_box" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:text="Sorry! no results"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
 
     </RelativeLayout>
