@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import ir.behnoudsh.pixabay.BuildConfig
 import ir.behnoudsh.pixabay.R
 import ir.behnoudsh.pixabay.databinding.ActivityMainBinding
 import ir.behnoudsh.pixabay.domain.model.PixabayImageItem
@@ -39,7 +40,9 @@ class MainActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        databinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
+
+         databinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         val factory = ImagesViewModelFactory()
         imagesViewModel = ViewModelProviders.of(this, factory)
             .get(ImagesViewModel::class.java)
@@ -60,8 +63,13 @@ class MainActivity :
     }
 
     fun initRecyclerView() {
+
+
         rv_imagesList.layoutManager = LinearLayoutManager(this)
         rv_imagesList.adapter = imagesAdapter
+        rv_imagesList.setItemViewCacheSize(100);
+        rv_imagesList.setDrawingCacheEnabled(true);
+        rv_imagesList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         initScrollListener()
     }
 

@@ -4,7 +4,6 @@ plugins {
     id 'kotlin-android-extensions'
     id 'kotlin-kapt'
 }
-
 android {
     compileSdkVersion 30
 
@@ -19,9 +18,12 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "API_CREDENTIAL", "\"21493154-5e65420f55ac8bf958559dcc3\""
+
     }
 
     buildTypes {
+
         release {
             debuggable false
             minifyEnabled true
@@ -29,6 +31,7 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
         debug {
             debuggable true
             minifyEnabled false
@@ -36,6 +39,7 @@ android {
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
         buildFeatures {
             dataBinding true
         }
@@ -111,9 +115,7 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$glide_version"
     annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
 
-
     //circle imageview
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-
 
 }
