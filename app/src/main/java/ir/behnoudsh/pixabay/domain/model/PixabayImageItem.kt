@@ -8,4 +8,5 @@ data class PixabayImageItem(
     val likes: Integer,
     val favorites: Integer,
     val comments: Integer,
+    val userImageURL: String?
 )

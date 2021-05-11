@@ -22,7 +22,7 @@ class ImagesRepository {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
-                        getImagesSuccessLiveData.postValue(it.hits)
+                         getImagesSuccessLiveData.postValue(it.hits)
                     },
                     {
                         getImagesFailureLiveData.postValue(true)

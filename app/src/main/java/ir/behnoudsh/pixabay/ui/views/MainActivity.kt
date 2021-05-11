@@ -1,6 +1,5 @@
 package ir.behnoudsh.pixabay.ui.views
 
-
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -17,12 +16,16 @@ import ir.behnoudsh.pixabay.databinding.ActivityMainBinding
 import ir.behnoudsh.pixabay.domain.model.PixabayImageItem
 import ir.behnoudsh.pixabay.ui.adapters.CellClickListener
 import ir.behnoudsh.pixabay.ui.adapters.ImagesAdapter
+import ir.behnoudsh.pixabay.ui.adapters.TagClickListener
 import ir.behnoudsh.pixabay.ui.viewmodels.ImagesViewModel
 import ir.behnoudsh.pixabay.ui.viewmodels.ImagesViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), CellClickListener {
+class MainActivity :
+    AppCompatActivity(),
+    CellClickListener,
+    TagClickListener {
 
     private lateinit var databinding: ActivityMainBinding
 
@@ -30,7 +33,7 @@ class MainActivity : AppCompatActivity(), CellClickListener {
     private lateinit var imagesViewModel: ImagesViewModel
 
     @Inject
-    val imagesAdapter: ImagesAdapter = ImagesAdapter(this, ArrayList(), this)
+    val imagesAdapter: ImagesAdapter = ImagesAdapter(this, ArrayList(), this, this)
     var page: Int = 1
     var isLoading = false
 
@@ -127,9 +130,7 @@ class MainActivity : AppCompatActivity(), CellClickListener {
             view, message,
             Snackbar.LENGTH_INDEFINITE
         ).setAction("retry") {
-
             imagesViewModel.getAllImages(et_searchword.text.toString(), page)
-
         }
         val snackbarView = snackbar.view
         val textView =
@@ -138,5 +139,8 @@ class MainActivity : AppCompatActivity(), CellClickListener {
         snackbar.show()
     }
 
-
+    override fun onTagClickListener(tag: String) {
+        et_searchword.setText(tag)
+        imagesViewModel.getAllImages(tag, 1)
+    }
 }
