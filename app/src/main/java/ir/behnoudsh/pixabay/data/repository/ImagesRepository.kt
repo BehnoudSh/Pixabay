@@ -15,7 +15,6 @@ class ImagesRepository : OutputReader {
     @Inject
     lateinit var retrofit: ApiInterface
 
-
     init {
         val apiComponent: ApiComponent = DaggerApiComponent.create()
         apiComponent.inject(this)
@@ -23,7 +22,6 @@ class ImagesRepository : OutputReader {
 
     val imagesSuccessLiveData = MutableLiveData<ArrayList<PixabayHitsData>>()
     val imagesFailureLiveData = MutableLiveData<Boolean>()
-
 
     override fun getData(searchWord: String, page: Int) {
         try {
@@ -55,6 +53,4 @@ class ImagesRepository : OutputReader {
         imagesSuccessLiveData.postValue(data.hits)
 
     }
-
-
 }

@@ -27,7 +27,8 @@
                 android:layout_margin="10dp"
                 android:onClick="@{()->ImagesViewModel.getAllImages(ImagesViewModel.searchWord,1)}"
                 android:padding="10dp"
-                android:src="@drawable/ic_loupe" />
+                android:src="@drawable/ic_loupe"
+                 />
 
             <EditText
                 android:id="@+id/et_searchword"
@@ -69,7 +70,8 @@
             <ImageView
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:src="@drawable/ic_box" />
+                android:src="@drawable/ic_box"
+                />
 
             <TextView
                 android:layout_width="match_parent"

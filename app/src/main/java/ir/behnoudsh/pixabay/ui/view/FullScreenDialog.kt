@@ -14,7 +14,6 @@ import kotlinx.android.synthetic.main.dialog_image_details.*
 class ImageDetailsDialog(var model: PixabayHitsData) :
     DialogFragment() {
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -30,6 +29,7 @@ class ImageDetailsDialog(var model: PixabayHitsData) :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         iv_close.setOnClickListener {
             dismiss()
         }
@@ -50,7 +50,5 @@ class ImageDetailsDialog(var model: PixabayHitsData) :
 
         tv_likes.text = model.likes.toString()
 
-
     }
-
 }
