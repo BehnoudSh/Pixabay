@@ -25,15 +25,11 @@ class ImagesViewModel : ViewModel() {
     }
 
     var showLoadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
-    var imagesSuccessLiveData: MutableLiveData<ArrayList<PixabayHitsData>> =
-        MutableLiveData<ArrayList<PixabayHitsData>>()
-    var imagesFailureLiveData: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    var imagesSuccessLiveData = imagesRepository.imagesSuccessLiveData
+    var imagesFailureLiveData = imagesRepository.imagesFailureLiveData
     val resetPage: MutableLiveData<Boolean> = MutableLiveData()
 
     fun getAllImages(input: String, page: Int) {
-
-        imagesSuccessLiveData = imagesRepository.imagesSuccessLiveData
-        imagesFailureLiveData = imagesRepository.imagesFailureLiveData
         if (page == 1)
             resetPage?.postValue(true)
         showLoadingLiveData?.postValue(true)

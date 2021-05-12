@@ -12,8 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import ir.behnoudsh.pixabay.R
+import ir.behnoudsh.pixabay.data.repository.ImagesRepository
 import ir.behnoudsh.pixabay.databinding.ActivityMainBinding
+import ir.behnoudsh.pixabay.di.component.DaggerImageRepositoryComponent
+import ir.behnoudsh.pixabay.di.component.DaggerViewModelComponent
 import ir.behnoudsh.pixabay.di.component.ImageRepositoryComponent
+import ir.behnoudsh.pixabay.di.component.ViewModelComponent
 import ir.behnoudsh.pixabay.domain.model.PixabayHitsData
 import ir.behnoudsh.pixabay.ui.adapter.CellClickListener
 import ir.behnoudsh.pixabay.ui.adapter.ImagesAdapter
@@ -31,7 +35,14 @@ class MainActivity :
     private lateinit var databinding: ActivityMainBinding
 
 
-    private lateinit var imagesViewModel: ImagesViewModel
+    @Inject
+    lateinit var imagesViewModel: ImagesViewModel
+
+    init {
+        val viewModelComponent: ViewModelComponent = DaggerViewModelComponent.create()
+        viewModelComponent.inject(this)
+    }
+
 
     val imagesAdapter: ImagesAdapter = ImagesAdapter(this, ArrayList(), this, this)
     var page: Int = 1
@@ -61,7 +72,6 @@ class MainActivity :
     }
 
     fun initRecyclerView() {
-
 
         rv_imagesList.layoutManager = LinearLayoutManager(this)
         rv_imagesList.adapter = imagesAdapter
