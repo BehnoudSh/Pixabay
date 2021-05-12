@@ -3,36 +3,50 @@ package ir.behnoudsh.pixabay.data.repository
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import ir.behnoudsh.pixabay.di.module.ApiClient
-import ir.behnoudsh.pixabay.domain.model.PixabayImageItem
+import ir.behnoudsh.pixabay.data.api.ApiInterface
+import ir.behnoudsh.pixabay.domain.model.PixabayData
+import ir.behnoudsh.pixabay.domain.model.PixabayHitsData
 import javax.inject.Inject
 
-class ImagesRepository {
+class ImagesRepository : OutputReader {
 
     @Inject
-    lateinit var retrofit: ApiClient
-    val getImagesSuccessLiveData = MutableLiveData<ArrayList<PixabayImageItem>>()
-    val getImagesFailureLiveData = MutableLiveData<Boolean>()
+    lateinit var retrofit: ApiInterface
 
-    fun getImages(input: String, page: Int) {
+    val imagesSuccessLiveData = MutableLiveData<ArrayList<PixabayHitsData>>()
+    val imagesFailureLiveData = MutableLiveData<Boolean>()
+
+
+    override fun getData(searchWord: String, page: Int) {
         try {
-            retrofit = ApiClient
-            val response = retrofit.provideRetrofit().getImages(input, page)
+            val response = retrofit.getImages(searchWord, page)
             response.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
-                         getImagesSuccessLiveData.postValue(it.hits)
+                        emitData(it)
                     },
                     {
-                        getImagesFailureLiveData.postValue(true)
+                        emitError("")
                     },
                     {
                     }
                 )
 
         } catch (ex: Exception) {
-            getImagesFailureLiveData.postValue(true)
+            emitError("")
         }
     }
+
+    override fun emitError(error: String) {
+        imagesFailureLiveData.postValue(true);
+    }
+
+    override fun emitData(data: PixabayData) {
+
+        imagesSuccessLiveData.postValue(data.hits)
+
+    }
+
+
 }

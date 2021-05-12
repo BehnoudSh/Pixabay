@@ -1,4 +1,4 @@
-package ir.behnoudsh.pixabay.ui.adapters
+package ir.behnoudsh.pixabay.ui.adapter
 
 import android.app.Activity
 import android.view.View
@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import ir.behnoudsh.pixabay.R
-import ir.behnoudsh.pixabay.domain.model.PixabayImageItem
+import ir.behnoudsh.pixabay.domain.model.PixabayHitsData
 
 
 class ImagesAdapter(
     val context: Activity,
-    var imagesList: ArrayList<PixabayImageItem>,
+    var imagesList: ArrayList<PixabayHitsData>,
     val cellClickListener: CellClickListener,
     val tagClickListener: TagClickListener
 ) :
@@ -98,7 +98,7 @@ class ImagesViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 }
 
 interface CellClickListener {
-    fun onCellClickListener(place: PixabayImageItem)
+    fun onCellClickListener(place: PixabayHitsData)
 }
 
 

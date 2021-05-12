@@ -1,6 +1,6 @@
 package ir.behnoudsh.pixabay.domain.model
 
-data class PixabayImageItem(
+data class PixabayHitsData(
     val webformatURL: String?,
     val largeImageURL: String?,
     val user: String?,

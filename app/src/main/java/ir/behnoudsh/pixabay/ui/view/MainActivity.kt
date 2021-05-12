@@ -1,4 +1,4 @@
-package ir.behnoudsh.pixabay.ui.views
+package ir.behnoudsh.pixabay.ui.view
 
 import android.os.Bundle
 import android.view.View
@@ -11,15 +11,15 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import ir.behnoudsh.pixabay.BuildConfig
 import ir.behnoudsh.pixabay.R
 import ir.behnoudsh.pixabay.databinding.ActivityMainBinding
-import ir.behnoudsh.pixabay.domain.model.PixabayImageItem
-import ir.behnoudsh.pixabay.ui.adapters.CellClickListener
-import ir.behnoudsh.pixabay.ui.adapters.ImagesAdapter
-import ir.behnoudsh.pixabay.ui.adapters.TagClickListener
-import ir.behnoudsh.pixabay.ui.viewmodels.ImagesViewModel
-import ir.behnoudsh.pixabay.ui.viewmodels.ImagesViewModelFactory
+import ir.behnoudsh.pixabay.di.component.ImageRepositoryComponent
+import ir.behnoudsh.pixabay.domain.model.PixabayHitsData
+import ir.behnoudsh.pixabay.ui.adapter.CellClickListener
+import ir.behnoudsh.pixabay.ui.adapter.ImagesAdapter
+import ir.behnoudsh.pixabay.ui.adapter.TagClickListener
+import ir.behnoudsh.pixabay.ui.viewmodel.ImagesViewModel
+import ir.behnoudsh.pixabay.ui.viewmodel.ImagesViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -30,10 +30,9 @@ class MainActivity :
 
     private lateinit var databinding: ActivityMainBinding
 
-    @Inject
+
     private lateinit var imagesViewModel: ImagesViewModel
 
-    @Inject
     val imagesAdapter: ImagesAdapter = ImagesAdapter(this, ArrayList(), this, this)
     var page: Int = 1
     var isLoading = false
@@ -41,8 +40,7 @@ class MainActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-         databinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        databinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         val factory = ImagesViewModelFactory()
         imagesViewModel = ViewModelProviders.of(this, factory)
             .get(ImagesViewModel::class.java)
@@ -110,7 +108,7 @@ class MainActivity :
 
             onSNACK(content, "Error: check internet connection and try again!")
         })
-        imagesViewModel.showloadingLiveData?.observe(this, {
+        imagesViewModel.showLoadingLiveData?.observe(this, {
             pb_loading.visibility = View.VISIBLE
         })
         imagesViewModel.resetPage?.observe(this, {
@@ -119,7 +117,7 @@ class MainActivity :
         })
     }
 
-    override fun onCellClickListener(image: PixabayImageItem) {
+    override fun onCellClickListener(image: PixabayHitsData) {
         val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this)
         alertDialog.setMessage("Do you want to see the details?")// for Message
         alertDialog.setPositiveButton("Yes") { dialog, id ->

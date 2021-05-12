@@ -1,4 +1,4 @@
-package ir.behnoudsh.pixabay.ui.views
+package ir.behnoudsh.pixabay.ui.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,13 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import ir.behnoudsh.pixabay.R
-import ir.behnoudsh.pixabay.domain.model.PixabayImageItem
+import ir.behnoudsh.pixabay.domain.model.PixabayHitsData
 import kotlinx.android.synthetic.main.dialog_image_details.*
 
-class ImageDetailsDialog(var model: PixabayImageItem) :
+class ImageDetailsDialog(var model: PixabayHitsData) :
     DialogFragment() {
 
 

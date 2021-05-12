@@ -1,4 +1,4 @@
-package ir.behnoudsh.pixabay.ui.adapters
+package ir.behnoudsh.pixabay.ui.adapter
 
 import android.app.Activity
 import android.view.View

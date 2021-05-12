@@ -1,8 +1,7 @@
-package ir.behnoudsh.pixabay.ui.viewmodels
+package ir.behnoudsh.pixabay.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import ir.behnoudsh.pixabay.ui.adapters.ImagesAdapter
 
 class ImagesViewModelFactory(): ViewModelProvider.Factory{
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

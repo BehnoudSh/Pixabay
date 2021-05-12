@@ -4,7 +4,7 @@
 
         <variable
             name="ImagesViewModel"
-            type="ir.behnoudsh.pixabay.ui.viewmodels.ImagesViewModel" />
+            type="ir.behnoudsh.pixabay.ui.viewmodel.ImagesViewModel" />
     </data>
 
     <RelativeLayout
