@@ -1,4 +1,4 @@
-package ir.behnoudsh.pixabay.domain.model
+package ir.behnoudsh.pixabay.data.model
 
 data class PixabayResponse(
     val error: String,

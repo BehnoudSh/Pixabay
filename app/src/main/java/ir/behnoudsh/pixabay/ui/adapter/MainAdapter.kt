@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import ir.behnoudsh.pixabay.R
-import ir.behnoudsh.pixabay.domain.model.PixabayHitsData
+import ir.behnoudsh.pixabay.data.model.PixabayHitsData
 
 
 class ImagesAdapter(

@@ -2,7 +2,7 @@ package ir.behnoudsh.pixabay.di.module
 
 import dagger.Module
 import dagger.Provides
-import ir.behnoudsh.pixabay.data.api.ApiInterface
+import ir.behnoudsh.pixabay.data.api.ApiService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -15,19 +15,16 @@ object ApiModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(): ApiInterface {
+    fun provideRetrofit(): ApiService {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(OkHttpClient())
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
-            .create(ApiInterface::class.java)
-
+            .create(ApiService::class.java)
 
     }
-
-
 }
 
 

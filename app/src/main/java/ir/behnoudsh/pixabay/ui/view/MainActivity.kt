@@ -4,26 +4,27 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import ir.behnoudsh.pixabay.R
-import ir.behnoudsh.pixabay.data.repository.ImagesRepository
 import ir.behnoudsh.pixabay.databinding.ActivityMainBinding
-import ir.behnoudsh.pixabay.di.component.DaggerImageRepositoryComponent
 import ir.behnoudsh.pixabay.di.component.DaggerViewModelComponent
-import ir.behnoudsh.pixabay.di.component.ImageRepositoryComponent
 import ir.behnoudsh.pixabay.di.component.ViewModelComponent
-import ir.behnoudsh.pixabay.domain.model.PixabayHitsData
+import ir.behnoudsh.pixabay.data.model.PixabayHitsData
 import ir.behnoudsh.pixabay.ui.adapter.CellClickListener
 import ir.behnoudsh.pixabay.ui.adapter.ImagesAdapter
 import ir.behnoudsh.pixabay.ui.adapter.TagClickListener
-import ir.behnoudsh.pixabay.ui.viewmodel.ImagesViewModel
-import ir.behnoudsh.pixabay.ui.viewmodel.ImagesViewModelFactory
+import ir.behnoudsh.pixabay.ui.viewmodel.MainViewModel
+import ir.behnoudsh.pixabay.ui.viewmodel.ViewModelFactory
+import ir.behnoudsh.pixabay.utils.Status
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -33,37 +34,38 @@ class MainActivity :
     TagClickListener {
 
     private lateinit var databinding: ActivityMainBinding
-
+    private lateinit var adapter: ImagesAdapter
 
     @Inject
-    lateinit var imagesViewModel: ImagesViewModel
+    lateinit var mainViewModel: MainViewModel
 
     init {
         val viewModelComponent: ViewModelComponent = DaggerViewModelComponent.create()
         viewModelComponent.inject(this)
     }
 
-
-    val imagesAdapter: ImagesAdapter = ImagesAdapter(this, ArrayList(), this, this)
     var page: Int = 1
     var isLoading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         databinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        val factory = ImagesViewModelFactory()
-        imagesViewModel = ViewModelProviders.of(this, factory)
-            .get(ImagesViewModel::class.java)
-        databinding.imagesViewModel = imagesViewModel
+        databinding.imagesViewModel = mainViewModel
         databinding.lifecycleOwner = this
-        registerObservers()
-        initRecyclerView()
-        imagesViewModel.getAllImages("fruits", page)
+
+        setupUI()
+        setupViewModel()
+        setupObservers()
+
+
+
+        mainViewModel.fetchImages("fruits", page)
         et_searchword.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 page = 1
-                imagesViewModel.getAllImages(et_searchword.text.toString(), page)
+                mainViewModel.fetchImages(et_searchword.text.toString(), page)
                 true
             } else {
                 false
@@ -71,27 +73,47 @@ class MainActivity :
         }
     }
 
-    fun initRecyclerView() {
+    private fun renderList(images: List<PixabayHitsData>) {
+        for (item in images) {
+            adapter.imagesList.add(item)
+        }
+        adapter.notifyDataSetChanged()
+    }
 
-        rv_imagesList.layoutManager = LinearLayoutManager(this)
-        rv_imagesList.adapter = imagesAdapter
-        rv_imagesList.setItemViewCacheSize(100);
-        rv_imagesList.setDrawingCacheEnabled(true);
-        rv_imagesList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
+    private fun setupUI() {
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        adapter = ImagesAdapter(this, ArrayList(), this, this)
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                recyclerView.context,
+                (recyclerView.layoutManager as LinearLayoutManager).orientation
+            )
+        )
+        recyclerView.adapter = adapter
+        recyclerView.setItemViewCacheSize(100);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         initScrollListener()
     }
 
+    private fun setupViewModel() {
+        val factory = ViewModelFactory()
+        mainViewModel = ViewModelProviders.of(this, factory)
+            .get(MainViewModel::class.java)
+    }
+
     private fun initScrollListener() {
-        rv_imagesList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager?
                 if (!isLoading) {
                     if (linearLayoutManager != null &&
-                        linearLayoutManager.findLastCompletelyVisibleItemPosition() == rv_imagesList.adapter!!.itemCount - 5
+                        linearLayoutManager.findLastCompletelyVisibleItemPosition() == recyclerView.adapter!!.itemCount - 5
                     ) {
                         page++
-                        imagesViewModel.getAllImages(et_searchword.text.toString(), page)
+                        mainViewModel.fetchImages(et_searchword.text.toString(), page)
                         isLoading = true
                     }
                 }
@@ -99,32 +121,54 @@ class MainActivity :
         })
     }
 
-    fun registerObservers() {
-        imagesViewModel.imagesSuccessLiveData.observe(this, {
-            isLoading = false
-            pb_loading.visibility = View.GONE
-            for (item in it) {
-                imagesAdapter.imagesList.add(item)
-            }
-            imagesAdapter.notifyDataSetChanged()
-            if (it.size == 0 && page == 1) {
-                ll_noResults.visibility = View.VISIBLE
-            } else
-                ll_noResults.visibility = View.GONE
-        })
-        imagesViewModel.imagesFailureLiveData.observe(this, {
-            isLoading = false
-            pb_loading.visibility = View.GONE
+    private fun setupObservers() {
 
-            onSNACK(content, "Error: check internet connection and try again!")
+        mainViewModel.getImages().observe(this, Observer {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    progressBar.visibility = View.GONE
+                    it.data?.let { pixabayData -> renderList(pixabayData.hits) }
+                    recyclerView.visibility = View.VISIBLE
+                }
+                Status.LOADING -> {
+                    progressBar.visibility = View.VISIBLE
+//                    recyclerView.visibility = View.GONE
+                }
+                Status.ERROR -> {
+                    //Handle Error
+                    isLoading = false
+
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                    onSNACK(content, "Error: check internet connection and try again!")
+
+                }
+            }
         })
-        imagesViewModel.showLoadingLiveData?.observe(this, {
-            pb_loading.visibility = View.VISIBLE
-        })
-        imagesViewModel.resetPage?.observe(this, {
+
+        mainViewModel.resetPage?.observe(this, {
             page = 1
-            imagesAdapter.imagesList.clear()
+            adapter.imagesList.clear()
         })
+
+
+//        imagesViewModel.imagesSuccessLiveData.observe(this, {
+//            isLoading = false
+//            pb_loading.visibility = View.GONE
+//            for (item in it) {
+//                imagesAdapter.imagesList.add(item)
+//            }
+//            imagesAdapter.notifyDataSetChanged()
+//            if (it.size == 0 && page == 1) {
+//                ll_noResults.visibility = View.VISIBLE
+//            } else
+//                ll_noResults.visibility = View.GONE
+//        })
+//
+//        imagesViewModel.showLoadingLiveData?.observe(this, {
+//            pb_loading.visibility = View.VISIBLE
+//        })
+
     }
 
     override fun onCellClickListener(image: PixabayHitsData) {
@@ -141,12 +185,12 @@ class MainActivity :
         alert.show()
     }
 
-    fun onSNACK(view: View, message: String) {
+    private fun onSNACK(view: View, message: String) {
         val snackbar = Snackbar.make(
             view, message,
             Snackbar.LENGTH_INDEFINITE
         ).setAction("retry") {
-            imagesViewModel.getAllImages(et_searchword.text.toString(), page)
+            mainViewModel.fetchImages(et_searchword.text.toString(), page)
         }
         val snackbarView = snackbar.view
         val textView =
@@ -157,6 +201,6 @@ class MainActivity :
 
     override fun onTagClickListener(tag: String) {
         et_searchword.setText(tag)
-        imagesViewModel.getAllImages(tag, 1)
+        mainViewModel.fetchImages(tag, 1)
     }
 }

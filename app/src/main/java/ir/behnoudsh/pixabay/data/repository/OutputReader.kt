@@ -1,11 +1,11 @@
 package ir.behnoudsh.pixabay.data.repository
 
 
-import ir.behnoudsh.pixabay.domain.model.PixabayData
-import ir.behnoudsh.pixabay.domain.model.PixabayResponse
+import io.reactivex.Single
+import ir.behnoudsh.pixabay.data.model.PixabayData
 
 interface OutputReader {
-    fun getData(searchWord: String, page: Int)
-    fun emitError(error: String)
-    fun emitData(data: PixabayData)
+    fun getData(searchWord: String, page: Int): Single<PixabayData>
+//    fun emitError(error: String)
+//    fun emitData(data: PixabayData)
 }
