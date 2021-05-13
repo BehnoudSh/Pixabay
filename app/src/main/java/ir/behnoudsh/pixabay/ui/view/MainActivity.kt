@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -15,10 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import ir.behnoudsh.pixabay.R
+import ir.behnoudsh.pixabay.data.model.PixabayHitsData
 import ir.behnoudsh.pixabay.databinding.ActivityMainBinding
 import ir.behnoudsh.pixabay.di.component.DaggerViewModelComponent
 import ir.behnoudsh.pixabay.di.component.ViewModelComponent
-import ir.behnoudsh.pixabay.data.model.PixabayHitsData
 import ir.behnoudsh.pixabay.ui.adapter.CellClickListener
 import ir.behnoudsh.pixabay.ui.adapter.ImagesAdapter
 import ir.behnoudsh.pixabay.ui.adapter.TagClickListener
@@ -127,44 +126,26 @@ class MainActivity :
                     isLoading = false
                     progressBar.visibility = View.GONE
                     it.data?.let { pixabayData -> renderList(pixabayData.hits) }
-                    recyclerView.visibility = View.VISIBLE
+                    if (it.data?.hits?.size == 0 && page == 1) {
+                        ll_noResults.visibility = View.VISIBLE
+                    } else
+                        ll_noResults.visibility = View.GONE
                 }
                 Status.LOADING -> {
                     progressBar.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
                 }
                 Status.ERROR -> {
                     isLoading = false
                     progressBar.visibility = View.GONE
-                    Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-                    onSNACK(content, "Error: check internet connection and try again!")
-
+                    onSNACK(content, it.message.toString())
                 }
             }
         })
 
-        mainViewModel.resetPage?.observe(this, {
+        mainViewModel.resetPage.observe(this, {
             page = 1
             adapter.imagesList.clear()
         })
-
-
-//        imagesViewModel.imagesSuccessLiveData.observe(this, {
-//            isLoading = false
-//            pb_loading.visibility = View.GONE
-//            for (item in it) {
-//                imagesAdapter.imagesList.add(item)
-//            }
-//            imagesAdapter.notifyDataSetChanged()
-//            if (it.size == 0 && page == 1) {
-//                ll_noResults.visibility = View.VISIBLE
-//            } else
-//                ll_noResults.visibility = View.GONE
-//        })
-//
-//        imagesViewModel.showLoadingLiveData?.observe(this, {
-//            pb_loading.visibility = View.VISIBLE
-//        })
 
     }
 

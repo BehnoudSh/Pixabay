@@ -10,8 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/rounded"
         android:gravity="center"
-        android:padding="10dp"
-        android:text="gdsnkjlg"
+        android:padding="@dimen/default_gap"
         android:textColor="@color/transparent_black_percent_70"
         android:textStyle="bold" />
 </LinearLayout>

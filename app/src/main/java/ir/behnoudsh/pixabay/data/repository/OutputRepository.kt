@@ -6,6 +6,4 @@ import ir.behnoudsh.pixabay.data.model.PixabayData
 
 interface OutputRepository {
     fun getData(searchWord: String, page: Int): Single<PixabayData>
-//    fun emitError(error: String)
-//    fun emitData(data: PixabayData)
 }

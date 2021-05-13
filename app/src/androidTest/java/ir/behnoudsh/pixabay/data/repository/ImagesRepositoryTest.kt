@@ -47,20 +47,20 @@ class ImagesRepositoryTest {
     @Test
     fun testDataListResponse() {
 
-        val pixabayHitData1: PixabayHitsData = PixabayHitsData(
+        val pixabayHitData1 = PixabayHitsData(
             "", "", "", "tags",
             120, 331, 341, ""
         )
-        val pixabayHitData2: PixabayHitsData = PixabayHitsData(
+        val pixabayHitData2 = PixabayHitsData(
             "", "", "", "tags",
             120, 331, 341, ""
         )
 
-        val mockArrays: ArrayList<PixabayHitsData> = ArrayList<PixabayHitsData>()
+        val mockArrays: ArrayList<PixabayHitsData> = ArrayList()
         mockArrays.add(pixabayHitData1)
         mockArrays.add(pixabayHitData2)
 
-        val mockData: PixabayData = PixabayData(mockArrays)
+        val mockData = PixabayData(mockArrays)
 
         every { apiHelper.getImages("car", 1) } returns Single.just(mockData)
 

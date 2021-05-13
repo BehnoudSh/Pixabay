@@ -13,7 +13,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import ir.behnoudsh.pixabay.R
 import ir.behnoudsh.pixabay.data.model.PixabayHitsData
-import kotlinx.android.synthetic.main.dialog_image_details.*
 
 
 class ImagesAdapter(
@@ -38,7 +37,7 @@ class ImagesAdapter(
 
     override fun onBindViewHolder(holder: ImagesViewHolder, position: Int) {
 
-        holder.tv_user.setText(imagesList.get(position).user)
+        holder.userTextView.setText(imagesList.get(position).user)
         holder.itemView.setOnClickListener {
             cellClickListener.onCellClickListener(imagesList.get(position))
         }
@@ -48,22 +47,22 @@ class ImagesAdapter(
                 .placeholder(R.mipmap.ic_launcher)
                 .signature(ObjectKey(imagesList.get(position).webformatURL))
                 .error(R.mipmap.ic_launcher)
-        ).centerCrop().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(holder.iv_previewImg)
+        ).centerCrop().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(holder.previewImageView)
 
         Glide.with(context).load(imagesList.get(position).userImageURL).apply(
             RequestOptions()
                 .placeholder(R.mipmap.ic_launcher)
                 .signature(ObjectKey(imagesList.get(position).userImageURL))
                 .error(R.mipmap.ic_launcher)
-        ).centerCrop().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(holder.iv_userImg)
+        ).centerCrop().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(holder.userImageView)
 
-        val allTags = imagesList.get(position).tags?.split(',')
+        val allTags = imagesList.get(position).tags.split(',')
 
         val tagsAdapter: TagsAdapter =
             TagsAdapter(context, allTags as ArrayList<String>, tagClickListener)
-        holder.rv_tags.layoutManager =
+        holder.tagsRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        holder.rv_tags.adapter = tagsAdapter
+        holder.tagsRecyclerView.adapter = tagsAdapter
 
 
     }
@@ -72,10 +71,10 @@ class ImagesAdapter(
 
 class ImagesViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    val tv_user: TextView = view.findViewById(R.id.tv_user)
-    val iv_previewImg: ImageView = view.findViewById(R.id.iv_previewImg)
-    val iv_userImg: ImageView = view.findViewById(R.id.iv_userImg)
-    val rv_tags: RecyclerView = view.findViewById(R.id.rv_tags)
+    val userTextView: TextView = view.findViewById(R.id.tv_user)
+    val previewImageView: ImageView = view.findViewById(R.id.iv_previewImg)
+    val userImageView: ImageView = view.findViewById(R.id.iv_userImg)
+    val tagsRecyclerView: RecyclerView = view.findViewById(R.id.rv_tags)
 }
 
 interface CellClickListener {

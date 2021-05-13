@@ -9,9 +9,9 @@ import ir.behnoudsh.pixabay.R
 
 
 class TagsAdapter(
-    val context: Activity,
-    var tagsList: ArrayList<String>,
-    val tagClickListener: TagClickListener
+    private val context: Activity,
+    private var tagsList: ArrayList<String>,
+    private val tagClickListener: TagClickListener
 ) :
     RecyclerView.Adapter<TagsViewHolder>() {
     override fun onCreateViewHolder(
@@ -29,17 +29,16 @@ class TagsAdapter(
 
     override fun onBindViewHolder(holder: TagsViewHolder, position: Int) {
 
-        holder.tv_tag.setText(tagsList.get(position).trim())
+        holder.tagsTextView.setText(tagsList.get(position).trim())
         holder.itemView.setOnClickListener {
             tagClickListener.onTagClickListener(tagsList.get(position))
         }
     }
-
 }
 
 class TagsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    val tv_tag: TextView = view.findViewById(R.id.tv_tag)
+    val tagsTextView: TextView = view.findViewById(R.id.tv_tag)
 
 }
 

@@ -12,6 +12,8 @@ import ir.behnoudsh.pixabay.data.repository.OutputRepository
 import ir.behnoudsh.pixabay.di.component.DaggerImageRepositoryComponent
 import ir.behnoudsh.pixabay.di.component.ImageRepositoryComponent
 import ir.behnoudsh.pixabay.utils.Resource
+import java.net.ConnectException
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 
@@ -33,7 +35,7 @@ class MainViewModel : ViewModel() {
 
     fun fetchImages(input: String, page: Int) {
         if (page == 1)
-            resetPage?.postValue(true)
+            resetPage.postValue(true)
 
         images.postValue(Resource.loading(null))
         compositeDisposable.add(
@@ -43,7 +45,18 @@ class MainViewModel : ViewModel() {
                 .subscribe({ imageList ->
                     images.postValue(Resource.success(imageList))
                 }, { throwable ->
-                    images.postValue(Resource.error("Something Went Wrong", null))
+                    var message = ""
+                    message = if (throwable is UnknownHostException || throwable is ConnectException)
+                        "check your internet connection and try again!"
+                    else
+                        "something went wrong. try again!"
+
+                    images.postValue(
+                        Resource.error(
+                            message,
+                            null
+                        )
+                    )
                 })
         )
 
@@ -57,6 +70,4 @@ class MainViewModel : ViewModel() {
     fun getImages(): LiveData<Resource<PixabayData>> {
         return images
     }
-
-
 }
