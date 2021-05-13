@@ -126,18 +126,17 @@ class MainActivity :
         mainViewModel.getImages().observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
+                    isLoading = false
                     progressBar.visibility = View.GONE
                     it.data?.let { pixabayData -> renderList(pixabayData.hits) }
                     recyclerView.visibility = View.VISIBLE
                 }
                 Status.LOADING -> {
                     progressBar.visibility = View.VISIBLE
-//                    recyclerView.visibility = View.GONE
+                    recyclerView.visibility = View.GONE
                 }
                 Status.ERROR -> {
-                    //Handle Error
                     isLoading = false
-
                     progressBar.visibility = View.GONE
                     Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
                     onSNACK(content, "Error: check internet connection and try again!")

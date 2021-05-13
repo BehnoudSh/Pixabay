@@ -1,6 +1,5 @@
 package ir.behnoudsh.pixabay.data.api
 
-import io.reactivex.Observable
 import io.reactivex.Single
 import ir.behnoudsh.pixabay.BuildConfig
 import ir.behnoudsh.pixabay.data.model.PixabayData

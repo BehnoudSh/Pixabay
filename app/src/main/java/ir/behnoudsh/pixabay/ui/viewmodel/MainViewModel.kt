@@ -8,7 +8,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import ir.behnoudsh.pixabay.data.model.PixabayData
-import ir.behnoudsh.pixabay.data.repository.MainRepository
+import ir.behnoudsh.pixabay.data.repository.OutputRepository
 import ir.behnoudsh.pixabay.di.component.DaggerImageRepositoryComponent
 import ir.behnoudsh.pixabay.di.component.ImageRepositoryComponent
 import ir.behnoudsh.pixabay.utils.Resource
@@ -19,7 +19,7 @@ class MainViewModel : ViewModel() {
     var searchWord = ObservableField<String>()
 
     @Inject
-    lateinit var imagesRepository: MainRepository
+    lateinit var imagesRepository: OutputRepository
 
     private val images = MutableLiveData<Resource<PixabayData>>()
     private val compositeDisposable = CompositeDisposable()
@@ -29,20 +29,9 @@ class MainViewModel : ViewModel() {
         imageRepoComponent.inject(this)
     }
 
-//    var showLoadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
-//    var imagesSuccessLiveData = imagesRepository.imagesSuccessLiveData
-//    var imagesFailureLiveData = imagesRepository.imagesFailureLiveData
-
-
     val resetPage: MutableLiveData<Boolean> = MutableLiveData()
 
     fun fetchImages(input: String, page: Int) {
-
-//        showLoadingLiveData?.postValue(true)
-//        imagesRepository.getData(
-//            input, page
-//        )
-
         if (page == 1)
             resetPage?.postValue(true)
 
