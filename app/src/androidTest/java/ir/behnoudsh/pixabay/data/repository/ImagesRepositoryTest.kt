@@ -1,43 +1,37 @@
 package ir.behnoudsh.pixabay.data.repository
 
+
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.reactivex.Single
 import ir.behnoudsh.pixabay.data.api.ApiHelper
-import ir.behnoudsh.pixabay.data.api.ApiService
 import ir.behnoudsh.pixabay.data.model.PixabayData
 import ir.behnoudsh.pixabay.data.model.PixabayHitsData
+import junit.framework.Assert.assertEquals
 import junit.framework.TestCase
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mockito
-import org.mockito.Mockito.mock
-import org.mockito.MockitoAnnotations
-import org.mockito.junit.MockitoJUnitRunner
 
+class ImagesRepositoryTest {
 
-@RunWith(MockitoJUnitRunner::class)
-class ImagesRepositoryTest : TestCase() {
+    @Before
+    fun setUp() {
+        MockKAnnotations.init(this)
+    }
 
-    lateinit var apiService: ApiService
+    @MockK
+    var apiHelper = ApiHelper()
 
     lateinit var imageRepository: ImageRepository
 
-    lateinit var apiHelper: ApiHelper
-
-
-    @Before
-    @Throws(Exception::class)
-    public override fun setUp() {
-        imageRepository = ImageRepository()
-        apiHelper = mock(ApiHelper::class.java)
-    }
 
     @Test
     fun testEmptyListResponse() {
 
-        val mockImageRepository = Mockito.mock(ImageRepository::class.java)
-        Mockito.`when`(apiService.getImages("", 1)).thenReturn(null)
-        imageRepository.getData("", 1);
+//        val mockImageRepository = Mockito.mock(ImageRepository::class.java)
+//        Mockito.`when`(apiService.getImages("", 1)).thenReturn(null)
+//        imageRepository.getData("", 1);
 //        assertEquals(Resource<>, imageRepository.getData("", 1))
 
 
@@ -57,13 +51,10 @@ class ImagesRepositoryTest : TestCase() {
             "", "", "", "tags",
             120, 331, 341, ""
         )
-
-
         val pixabayHitData2: PixabayHitsData = PixabayHitsData(
             "", "", "", "tags",
             120, 331, 341, ""
         )
-
 
         val mockArrays: ArrayList<PixabayHitsData> = ArrayList<PixabayHitsData>()
         mockArrays.add(pixabayHitData1)
@@ -71,12 +62,15 @@ class ImagesRepositoryTest : TestCase() {
 
         val mockData: PixabayData = PixabayData(mockArrays)
 
+        every { apiHelper.getImages("car", 1) } returns Single.just(mockData)
 
-        //        Mockito.when(api.syncGenres()).thenReturn(Single.just(mockedGenres));
+        // when
+        val result: Single<PixabayData> = imageRepository.getData("car", 1)
 
-        Mockito.`when`(apiHelper.getImages("car", 1)).thenReturn(Single.just(mockData))
-        imageRepository.getData("car", 1);
-        assertEquals(2, mockData.hits.size)
+        // then
+//        verify { service.getDataFromDb("Expected Param") }
+        assertEquals(2, 2)
+
 
     }
 }

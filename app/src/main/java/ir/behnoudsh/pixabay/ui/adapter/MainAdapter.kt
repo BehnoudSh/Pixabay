@@ -7,9 +7,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.signature.ObjectKey
 import ir.behnoudsh.pixabay.R
 import ir.behnoudsh.pixabay.data.model.PixabayHitsData
+import kotlinx.android.synthetic.main.dialog_image_details.*
 
 
 class ImagesAdapter(
@@ -39,19 +43,19 @@ class ImagesAdapter(
             cellClickListener.onCellClickListener(imagesList.get(position))
         }
 
-        Picasso.get()
-            .load(imagesList.get(position).webformatURL)
-            .placeholder(R.mipmap.ic_launcher)
-            .error(R.mipmap.ic_launcher)
-            .fit().centerCrop()
-            .into(holder.iv_previewImg)
+        Glide.with(context).load(imagesList.get(position).webformatURL).apply(
+            RequestOptions()
+                .placeholder(R.mipmap.ic_launcher)
+                .signature(ObjectKey(imagesList.get(position).webformatURL))
+                .error(R.mipmap.ic_launcher)
+        ).centerCrop().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(holder.iv_previewImg)
 
-        Picasso.get()
-            .load(imagesList.get(position).userImageURL)
-            .placeholder(R.mipmap.ic_launcher)
-            .error(R.mipmap.ic_launcher)
-            .fit().centerCrop()
-            .into(holder.iv_userImg)
+        Glide.with(context).load(imagesList.get(position).userImageURL).apply(
+            RequestOptions()
+                .placeholder(R.mipmap.ic_launcher)
+                .signature(ObjectKey(imagesList.get(position).userImageURL))
+                .error(R.mipmap.ic_launcher)
+        ).centerCrop().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(holder.iv_userImg)
 
         val allTags = imagesList.get(position).tags?.split(',')
 
@@ -60,6 +64,7 @@ class ImagesAdapter(
         holder.rv_tags.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         holder.rv_tags.adapter = tagsAdapter
+
 
     }
 

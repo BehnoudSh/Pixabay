@@ -55,17 +55,6 @@ android {
         jvmTarget = '1.8'
     }
 
-//    packagingOptions {
-//        exclude 'META-INF/DEPENDENCIES'
-//        exclude 'META-INF/LICENSE'
-//        exclude 'META-INF/LICENSE.txt'
-//        exclude 'META-INF/license.txt'
-//        exclude 'META-INF/NOTICE'
-//        exclude 'META-INF/NOTICE.txt'
-//        exclude 'META-INF/notice.txt'
-//        exclude 'META-INF/ASL2.0'
-//        exclude("META-INF/*.kotlin_module")
-//    }
 }
 
 dependencies {
@@ -84,8 +73,8 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    testImplementation 'org.mockito:mockito-core:2.8.9'
-
+    testImplementation "io.mockk:mockk:1.9.3"
+    androidTestImplementation "io.mockk:mockk-android:1.9.3"
 
     //rxjava
     implementation 'io.reactivex.rxjava2:rxjava:2.2.21'
@@ -94,31 +83,25 @@ dependencies {
     //circle imageview
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
-    //picasso
-    implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
-    implementation 'com.squareup.okhttp3:okhttp-urlconnection:4.9.1'
-
-    def dagger_version = "2.27";
-    def retrofitVersion = '2.9.0'
-    def butterKnifeVersion = '10.2.3'
-    def lifecycle_version = '2.2.0'
+    // glide
+    def glide_version = '4.12.0'
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
     // lifecycle components
+    def lifecycle_version = '2.2.0'
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     kapt "androidx.lifecycle:lifecycle-common:$lifecycle_version"
 
-    //butterknife
-    implementation "com.jakewharton:butterknife:$butterKnifeVersion"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
-
     //retrofit
+    def retrofitVersion = '2.9.0'
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
     //dagger
+    def dagger_version = "2.27";
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     implementation "com.google.dagger:dagger-android:$dagger_version"

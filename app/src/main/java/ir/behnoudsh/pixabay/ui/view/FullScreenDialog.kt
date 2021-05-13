@@ -5,7 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.signature.ObjectKey
 import ir.behnoudsh.pixabay.R
 import ir.behnoudsh.pixabay.data.model.PixabayHitsData
 import kotlinx.android.synthetic.main.dialog_image_details.*
@@ -33,12 +36,12 @@ class ImageDetailsDialog(var model: PixabayHitsData) :
             dismiss()
         }
 
-        Picasso.get()
-            .load(model.largeImageURL)
-            .placeholder(R.mipmap.ic_launcher)
-            .error(R.mipmap.ic_launcher)
-            .fit().centerInside()
-            .into(iv_image)
+        Glide.with(view).load(model.largeImageURL).apply(
+            RequestOptions()
+                .placeholder(R.mipmap.ic_launcher)
+                .signature(ObjectKey(model.largeImageURL))
+                .error(R.mipmap.ic_launcher)
+        ).centerInside().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(iv_image)
 
         tv_user.text = model.user
 
