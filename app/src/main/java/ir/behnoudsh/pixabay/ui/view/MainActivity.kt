@@ -59,8 +59,6 @@ class MainActivity :
         setupViewModel()
         setupObservers()
 
-
-
         mainViewModel.fetchImages("fruits", page)
         et_searchword.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {

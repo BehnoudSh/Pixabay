@@ -3,6 +3,7 @@ package ir.behnoudsh.pixabay.di.module
 import dagger.Module
 import dagger.Provides
 import ir.behnoudsh.pixabay.data.api.ApiService
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
