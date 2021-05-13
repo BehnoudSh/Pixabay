@@ -15,34 +15,18 @@ import org.junit.Test
 
 class ImagesRepositoryTest {
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this)
-    }
-
     @MockK
-    var apiHelper = ApiHelper()
+    lateinit var apiHelper : ApiHelper
 
     lateinit var imageRepository: ImageRepository
 
-
-    @Test
-    fun testEmptyListResponse() {
-
-//        val mockImageRepository = Mockito.mock(ImageRepository::class.java)
-//        Mockito.`when`(apiService.getImages("", 1)).thenReturn(null)
-//        imageRepository.getData("", 1);
-//        assertEquals(Resource<>, imageRepository.getData("", 1))
-
-
-//        when(imageRepository.getData("fruits",1))
-//        // given
-//        when(apiService.syncGenres()).thenReturn(Observable.just(Collections.emptyList());
-//        // when
-//        splashPresenter.syncGenres();
-//        // then
-//        verify(... // for example:, verify call to splashView.navigateToHome()
+    @Before
+    fun setUp() {
+        apiHelper = ApiHelper()
+        imageRepository = ImageRepository()
+        MockKAnnotations.init(this)
     }
+
 
     @Test
     fun testDataListResponse() {
@@ -63,12 +47,7 @@ class ImagesRepositoryTest {
         val mockData = PixabayData(mockArrays)
 
         every { apiHelper.getImages("car", 1) } returns Single.just(mockData)
-
-        // when
         val result: Single<PixabayData> = imageRepository.getData("car", 1)
-
-        // then
-//        verify { service.getDataFromDb("Expected Param") }
         assertEquals(2, 2)
 
 
