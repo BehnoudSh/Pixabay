@@ -1,5 +1,8 @@
+
+https://user-images.githubusercontent.com/22701499/118270558-79d57c80-b4d5-11eb-8001-0020d43b85d5.mp4
+
 # Pixabay
-Android Coding Challenge for Payback :)
+Android Coding Challenge :)
 
 I have chosen MVVM, clean and databinding for the architecture, which consists of the recommended layers.
 Repository has the duty of getting data from the api using retrofit, and preparing the data for viewmodel.
@@ -11,4 +14,4 @@ I used dagger for dependency injection.
 rxjava is used in repository and viewmodel.
 pixabay api does not send good response for error handling (I mean standard json), so I handled the error type using rxjava throwable.
 I tried to make a standard and beautiful app. the functionality is compeleted, I mean user can click on tags too and the search word changes :)
-Thank you Payback for such a complete and challenging app :)
+Thank you :)
