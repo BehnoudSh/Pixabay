@@ -29,9 +29,10 @@ class MainViewModel : ViewModel() {
     init {
         val imageRepoComponent: ImageRepositoryComponent = DaggerImageRepositoryComponent.create()
         imageRepoComponent.inject(this)
+        searchWord.set("fruits")
     }
 
-    val resetPage: MutableLiveData<Boolean> = MutableLiveData()
+    private val resetPage = MutableLiveData<Boolean>()
 
     fun fetchImages(input: String, page: Int) {
         if (page == 1)
@@ -46,10 +47,11 @@ class MainViewModel : ViewModel() {
                     images.postValue(Resource.success(imageList))
                 }, { throwable ->
                     var message = ""
-                    message = if (throwable is UnknownHostException || throwable is ConnectException)
-                        "check your internet connection and try again!"
-                    else
-                        "something went wrong. try again!"
+                    message =
+                        if (throwable is UnknownHostException || throwable is ConnectException)
+                            "check your internet connection and try again!"
+                        else
+                            "something went wrong. try again!"
 
                     images.postValue(
                         Resource.error(
@@ -69,5 +71,10 @@ class MainViewModel : ViewModel() {
 
     fun getImages(): LiveData<Resource<PixabayData>> {
         return images
+    }
+
+    fun getPageStatus(): LiveData<Boolean> {
+
+        return resetPage
     }
 }

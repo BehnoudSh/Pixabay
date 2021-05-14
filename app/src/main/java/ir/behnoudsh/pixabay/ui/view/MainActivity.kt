@@ -34,6 +34,8 @@ class MainActivity :
 
     private lateinit var databinding: ActivityMainBinding
     private lateinit var adapter: ImagesAdapter
+    private var page: Int = 1
+    private var isLoading = false
 
     @Inject
     lateinit var mainViewModel: MainViewModel
@@ -43,22 +45,16 @@ class MainActivity :
         viewModelComponent.inject(this)
     }
 
-    var page: Int = 1
-    var isLoading = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         databinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         databinding.imagesViewModel = mainViewModel
         databinding.lifecycleOwner = this
-
         setupUI()
         setupViewModel()
         setupObservers()
-
         mainViewModel.fetchImages("fruits", page)
+        et_searchword.setText("fruits")
         et_searchword.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 page = 1
@@ -119,7 +115,6 @@ class MainActivity :
     }
 
     private fun setupObservers() {
-
         mainViewModel.getImages().observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
@@ -141,17 +136,16 @@ class MainActivity :
                 }
             }
         })
-
-        mainViewModel.resetPage.observe(this, {
+        mainViewModel.getPageStatus().observe(this, {
             page = 1
             adapter.imagesList.clear()
-        })
 
+        })
     }
 
     override fun onCellClickListener(image: PixabayHitsData) {
         val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this)
-        alertDialog.setMessage("Do you want to see the details?")// for Message
+        alertDialog.setMessage("Do you want to see the details?")
         alertDialog.setPositiveButton("Yes") { dialog, id ->
             val dialogFragment = ImageDetailsDialog(image)
             dialogFragment.show(supportFragmentManager, "imageDetails")
@@ -179,6 +173,7 @@ class MainActivity :
 
     override fun onTagClickListener(tag: String) {
         et_searchword.setText(tag)
-        mainViewModel.fetchImages(tag, 1)
+        page = 1
+        mainViewModel.fetchImages(tag, page)
     }
 }
