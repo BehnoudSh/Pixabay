@@ -34,7 +34,6 @@ class MainActivity :
 
     private lateinit var databinding: ActivityMainBinding
     private lateinit var adapter: ImagesAdapter
-    private var page: Int = 1
     private var isLoading = false
 
     @Inject
@@ -53,12 +52,11 @@ class MainActivity :
         setupUI()
         setupViewModel()
         setupObservers()
-        mainViewModel.fetchImages("fruits", page)
+        mainViewModel.fetchImages("fruits", true)
         et_searchword.setText("fruits")
         et_searchword.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                page = 1
-                mainViewModel.fetchImages(et_searchword.text.toString(), page)
+                mainViewModel.fetchImages(et_searchword.text.toString(), true)
                 true
             } else {
                 false
@@ -72,7 +70,6 @@ class MainActivity :
         }
         adapter.notifyDataSetChanged()
     }
-
 
     private fun setupUI() {
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -105,8 +102,7 @@ class MainActivity :
                     if (linearLayoutManager != null &&
                         linearLayoutManager.findLastCompletelyVisibleItemPosition() == recyclerView.adapter!!.itemCount - 5
                     ) {
-                        page++
-                        mainViewModel.fetchImages(et_searchword.text.toString(), page)
+                        mainViewModel.loadMore(et_searchword.text.toString())
                         isLoading = true
                     }
                 }
@@ -121,10 +117,6 @@ class MainActivity :
                     isLoading = false
                     progressBar.visibility = View.GONE
                     it.data?.let { pixabayData -> renderList(pixabayData.hits) }
-                    if (it.data?.hits?.size == 0 && page == 1) {
-                        ll_noResults.visibility = View.VISIBLE
-                    } else
-                        ll_noResults.visibility = View.GONE
                 }
                 Status.LOADING -> {
                     progressBar.visibility = View.VISIBLE
@@ -136,10 +128,18 @@ class MainActivity :
                 }
             }
         })
-        mainViewModel.getPageStatus().observe(this, {
-            page = 1
-            adapter.imagesList.clear()
 
+        mainViewModel.getPageStatus().observe(this, Observer {
+            adapter.imagesList.clear()
+        })
+
+        mainViewModel.getListStatus().observe(this, Observer {
+            if (it) {
+                ll_noResults.visibility = View.VISIBLE
+                progressBar.visibility = View.GONE
+            } else {
+                ll_noResults.visibility = View.GONE
+            }
         })
     }
 
@@ -162,7 +162,7 @@ class MainActivity :
             view, message,
             Snackbar.LENGTH_INDEFINITE
         ).setAction("retry") {
-            mainViewModel.fetchImages(et_searchword.text.toString(), page)
+            mainViewModel.fetchImages(et_searchword.text.toString(), false)
         }
         val snackbarView = snackbar.view
         val textView =
@@ -173,7 +173,6 @@ class MainActivity :
 
     override fun onTagClickListener(tag: String) {
         et_searchword.setText(tag)
-        page = 1
-        mainViewModel.fetchImages(tag, page)
+        mainViewModel.fetchImages(tag, true)
     }
 }

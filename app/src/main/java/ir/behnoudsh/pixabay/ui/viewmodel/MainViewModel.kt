@@ -20,11 +20,19 @@ import javax.inject.Inject
 class MainViewModel : ViewModel() {
     var searchWord = ObservableField<String>()
 
+    var page: Int = 1
+
     @Inject
     lateinit var imagesRepository: OutputRepository
 
     private val images = MutableLiveData<Resource<PixabayData>>()
     private val compositeDisposable = CompositeDisposable()
+
+
+    private val resetPage = MutableLiveData<Boolean>()
+
+    private val emptyList = MutableLiveData<Boolean>()
+
 
     init {
         val imageRepoComponent: ImageRepositoryComponent = DaggerImageRepositoryComponent.create()
@@ -32,11 +40,12 @@ class MainViewModel : ViewModel() {
         searchWord.set("fruits")
     }
 
-    private val resetPage = MutableLiveData<Boolean>()
 
-    fun fetchImages(input: String, page: Int) {
-        if (page == 1)
+    fun fetchImages(input: String, newWord: Boolean) {
+        if (newWord) {
+            page = 1
             resetPage.postValue(true)
+        }
 
         images.postValue(Resource.loading(null))
         compositeDisposable.add(
@@ -45,6 +54,11 @@ class MainViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ imageList ->
                     images.postValue(Resource.success(imageList))
+                    if (page == 1 && imageList.hits.size == 0) {
+                        emptyList.postValue(true)
+                    } else {
+                        emptyList.postValue(false)
+                    }
                 }, { throwable ->
                     var message = ""
                     message =
@@ -64,6 +78,13 @@ class MainViewModel : ViewModel() {
 
     }
 
+
+    fun loadMore(input: String) {
+        page++
+        fetchImages(input, false)
+    }
+
+
     override fun onCleared() {
         super.onCleared()
         compositeDisposable.dispose()
@@ -76,5 +97,10 @@ class MainViewModel : ViewModel() {
     fun getPageStatus(): LiveData<Boolean> {
 
         return resetPage
+    }
+
+    fun getListStatus(): LiveData<Boolean> {
+
+        return emptyList
     }
 }
