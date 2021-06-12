@@ -102,9 +102,9 @@ class MainActivity :
         mainViewModel.getImages().observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
-//                    isLoading = false
-//                    progressBar.visibility = View.GONE
-//                    it.data?.let { pixabayData -> renderList(pixabayData.hits) }
+                    isLoading = false
+                    progressBar.visibility = View.GONE
+                    it.data?.let { pixabayData -> renderList(pixabayData) }
                 }
                 Status.LOADING -> {
                     progressBar.visibility = View.VISIBLE
@@ -117,11 +117,6 @@ class MainActivity :
             }
         })
 
-        mainViewModel.getAllImages().observe(this, Observer {
-            isLoading = false
-            progressBar.visibility = View.GONE
-            renderList(it)
-        })
 
         mainViewModel.getPageStatus().observe(this, Observer {
             adapterFood.clear()

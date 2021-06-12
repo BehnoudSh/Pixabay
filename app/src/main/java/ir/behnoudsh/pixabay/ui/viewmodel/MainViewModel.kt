@@ -25,8 +25,7 @@ class MainViewModel : ViewModel() {
     @Inject
     lateinit var imagesRepository: OutputRepository
 
-    private val images = MutableLiveData<Resource<PixabayData>>()
-    private val allImages = MutableLiveData<List<PixabayHitsData>>()
+    private val allImages = MutableLiveData<Resource<List<PixabayHitsData>>>()
     private val innerList = ArrayList<PixabayHitsData>()
 
     private val compositeDisposable = CompositeDisposable()
@@ -47,7 +46,7 @@ class MainViewModel : ViewModel() {
             innerList.clear()
         }
 
-        images.postValue(Resource.loading(null))
+        allImages.postValue(Resource.loading(null))
 
         compositeDisposable.add(
             imagesRepository.getData(input, page)
@@ -55,9 +54,8 @@ class MainViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ imageList ->
                     innerList.addAll(imageList.hits)
-                    allImages.value = innerList
+                    allImages.value = Resource.success(innerList)
                     allImages.postValue(allImages.value)
-//                    images.postValue(Resource.success(imageList))
                     if (page == 1 && imageList.hits.size == 0) {
                         emptyList.postValue(true)
                     } else {
@@ -71,7 +69,7 @@ class MainViewModel : ViewModel() {
                         else
                             "something went wrong. try again!"
 
-                    images.postValue(
+                    allImages.postValue(
                         Resource.error(
                             message,
                             null
@@ -91,11 +89,8 @@ class MainViewModel : ViewModel() {
         compositeDisposable.dispose()
     }
 
-    fun getImages(): LiveData<Resource<PixabayData>> {
-        return images
-    }
 
-    fun getAllImages(): LiveData<List<PixabayHitsData>> {
+    fun getImages(): LiveData<Resource<List<PixabayHitsData>>> {
         return allImages
     }
 
