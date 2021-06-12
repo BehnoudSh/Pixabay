@@ -1,5 +1,4 @@
 
-https://user-images.githubusercontent.com/22701499/118270558-79d57c80-b4d5-11eb-8001-0020d43b85d5.mp4
 
 # Pixabay
 Android Coding Challenge :)
