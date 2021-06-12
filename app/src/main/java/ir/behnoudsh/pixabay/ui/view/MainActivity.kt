@@ -47,11 +47,16 @@ class MainActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         databinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        databinding.imagesViewModel = mainViewModel
-        databinding.lifecycleOwner = this
+
+
+
         setupUI()
         setupViewModel()
         setupObservers()
+
+        databinding.imagesViewModel = mainViewModel
+        databinding.lifecycleOwner = this
+
         mainViewModel.fetchImages("fruits", true)
         et_searchword.setText("fruits")
         et_searchword.setOnEditorActionListener { v, actionId, event ->

@@ -39,7 +39,7 @@ class MainViewModel : ViewModel() {
         imageRepoComponent.inject(this)
         searchWord.set("fruits")
     }
-
+ 
 
     fun fetchImages(input: String, newWord: Boolean) {
         if (newWord) {
@@ -48,6 +48,7 @@ class MainViewModel : ViewModel() {
         }
 
         images.postValue(Resource.loading(null))
+
         compositeDisposable.add(
             imagesRepository.getData(input, page)
                 .subscribeOn(Schedulers.io())
