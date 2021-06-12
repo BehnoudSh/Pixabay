@@ -33,6 +33,7 @@ At first I tried to make each component structure, and then wiring all the compo
 7. implementing the main logic of application inside viewmodel and repository
 8. view completion: Any time a new data is being fetched, view does something such as filling the recyclerview. this concept has been done using livedata.
 9. refactoring and adding some comments
+10. using view model for saving the state in case of configuration changes and designing the layouts for both portrait and landscape
 
 I have used pagination for better performance and making the list endless.
 I used Glide for caching the images.
