@@ -1,5 +1,8 @@
 
-https://user-images.githubusercontent.com/22701499/118270558-79d57c80-b4d5-11eb-8001-0020d43b85d5.mp4
+
+https://user-images.githubusercontent.com/22701499/121772827-4433ba00-cb8d-11eb-90a6-b4a1064cbd67.mp4
+
+
 
 # Pixabay
 Android Coding Challenge :)
@@ -33,6 +36,7 @@ At first I tried to make each component structure, and then wiring all the compo
 7. implementing the main logic of application inside viewmodel and repository
 8. view completion: Any time a new data is being fetched, view does something such as filling the recyclerview. this concept has been done using livedata.
 9. refactoring and adding some comments
+10. using view model for saving the state in case of configuration changes and designing the layouts for both portrait and landscape
 
 I have used pagination for better performance and making the list endless.
 I used Glide for caching the images.
