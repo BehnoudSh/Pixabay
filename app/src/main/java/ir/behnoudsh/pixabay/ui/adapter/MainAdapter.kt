@@ -31,6 +31,11 @@ class ImagesAdapter(
 
     }
 
+    fun updateList(imagesList: ArrayList<PixabayHitsData>) {
+
+        this.imagesList = imagesList
+    }
+
     override fun getItemCount(): Int {
         return imagesList.size
     }
@@ -58,12 +63,9 @@ class ImagesAdapter(
 
         val allTags = imagesList.get(position).tags.split(',')
 
-        val tagsAdapter: TagsAdapter =
+        val tagsAdapter =
             TagsAdapter(context, allTags as ArrayList<String>, tagClickListener)
-        holder.tagsRecyclerView.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         holder.tagsRecyclerView.adapter = tagsAdapter
-
 
     }
 

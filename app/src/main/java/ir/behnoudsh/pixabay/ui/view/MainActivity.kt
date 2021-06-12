@@ -9,23 +9,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import ir.behnoudsh.pixabay.R
 import ir.behnoudsh.pixabay.data.model.PixabayHitsData
 import ir.behnoudsh.pixabay.databinding.ActivityMainBinding
-import ir.behnoudsh.pixabay.di.component.DaggerViewModelComponent
-import ir.behnoudsh.pixabay.di.component.ViewModelComponent
 import ir.behnoudsh.pixabay.ui.adapter.CellClickListener
 import ir.behnoudsh.pixabay.ui.adapter.ImagesAdapter
 import ir.behnoudsh.pixabay.ui.adapter.TagClickListener
 import ir.behnoudsh.pixabay.ui.viewmodel.MainViewModel
-import ir.behnoudsh.pixabay.ui.viewmodel.ViewModelFactory
 import ir.behnoudsh.pixabay.utils.Status
 import kotlinx.android.synthetic.main.activity_main.*
-import javax.inject.Inject
 
 class MainActivity :
     AppCompatActivity(),
@@ -36,19 +31,13 @@ class MainActivity :
     private lateinit var adapter: ImagesAdapter
     private var isLoading = false
 
-    @Inject
-    lateinit var mainViewModel: MainViewModel
+    val adapterFood = mutableListOf<PixabayHitsData>()
 
-    init {
-        val viewModelComponent: ViewModelComponent = DaggerViewModelComponent.create()
-        viewModelComponent.inject(this)
-    }
+    lateinit var mainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         databinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
-
 
         setupUI()
         setupViewModel()
@@ -57,8 +46,26 @@ class MainActivity :
         databinding.imagesViewModel = mainViewModel
         databinding.lifecycleOwner = this
 
-        mainViewModel.fetchImages("fruits", true)
-        et_searchword.setText("fruits")
+    }
+
+    private fun renderList(imagess: List<PixabayHitsData>) {
+        adapterFood.clear()
+        adapterFood.addAll(imagess)
+        adapter.updateList(imagess as ArrayList<PixabayHitsData>)
+        adapter.notifyDataSetChanged()
+
+
+    }
+
+    private fun setupUI() {
+        adapter = ImagesAdapter(this, adapterFood as ArrayList<PixabayHitsData>, this, this)
+
+        recyclerView.adapter = adapter
+        recyclerView.setItemViewCacheSize(100);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        initScrollListener()
+
         et_searchword.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 mainViewModel.fetchImages(et_searchword.text.toString(), true)
@@ -69,33 +76,9 @@ class MainActivity :
         }
     }
 
-    private fun renderList(images: List<PixabayHitsData>) {
-        for (item in images) {
-            adapter.imagesList.add(item)
-        }
-        adapter.notifyDataSetChanged()
-    }
-
-    private fun setupUI() {
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = ImagesAdapter(this, ArrayList(), this, this)
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(
-                recyclerView.context,
-                (recyclerView.layoutManager as LinearLayoutManager).orientation
-            )
-        )
-        recyclerView.adapter = adapter
-        recyclerView.setItemViewCacheSize(100);
-        recyclerView.setDrawingCacheEnabled(true);
-        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-        initScrollListener()
-    }
-
     private fun setupViewModel() {
-        val factory = ViewModelFactory()
-        mainViewModel = ViewModelProviders.of(this, factory)
-            .get(MainViewModel::class.java)
+
+        mainViewModel = ViewModelProviders.of(this)[MainViewModel::class.java]
     }
 
     private fun initScrollListener() {
@@ -119,9 +102,9 @@ class MainActivity :
         mainViewModel.getImages().observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
-                    isLoading = false
-                    progressBar.visibility = View.GONE
-                    it.data?.let { pixabayData -> renderList(pixabayData.hits) }
+//                    isLoading = false
+//                    progressBar.visibility = View.GONE
+//                    it.data?.let { pixabayData -> renderList(pixabayData.hits) }
                 }
                 Status.LOADING -> {
                     progressBar.visibility = View.VISIBLE
@@ -134,8 +117,14 @@ class MainActivity :
             }
         })
 
+        mainViewModel.getAllImages().observe(this, Observer {
+            isLoading = false
+            progressBar.visibility = View.GONE
+            renderList(it)
+        })
+
         mainViewModel.getPageStatus().observe(this, Observer {
-            adapter.imagesList.clear()
+            adapterFood.clear()
         })
 
         mainViewModel.getListStatus().observe(this, Observer {

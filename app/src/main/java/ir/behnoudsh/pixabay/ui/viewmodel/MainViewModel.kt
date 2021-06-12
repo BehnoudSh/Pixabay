@@ -8,6 +8,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import ir.behnoudsh.pixabay.data.model.PixabayData
+import ir.behnoudsh.pixabay.data.model.PixabayHitsData
 import ir.behnoudsh.pixabay.data.repository.OutputRepository
 import ir.behnoudsh.pixabay.di.component.DaggerImageRepositoryComponent
 import ir.behnoudsh.pixabay.di.component.ImageRepositoryComponent
@@ -19,32 +20,31 @@ import javax.inject.Inject
 
 class MainViewModel : ViewModel() {
     var searchWord = ObservableField<String>()
-
     var page: Int = 1
 
     @Inject
     lateinit var imagesRepository: OutputRepository
 
     private val images = MutableLiveData<Resource<PixabayData>>()
+    private val allImages = MutableLiveData<List<PixabayHitsData>>()
+    private val innerList = ArrayList<PixabayHitsData>()
+
     private val compositeDisposable = CompositeDisposable()
-
-
     private val resetPage = MutableLiveData<Boolean>()
-
     private val emptyList = MutableLiveData<Boolean>()
-
 
     init {
         val imageRepoComponent: ImageRepositoryComponent = DaggerImageRepositoryComponent.create()
         imageRepoComponent.inject(this)
         searchWord.set("fruits")
+        fetchImages("fruits", true)
     }
- 
 
     fun fetchImages(input: String, newWord: Boolean) {
         if (newWord) {
             page = 1
             resetPage.postValue(true)
+            innerList.clear()
         }
 
         images.postValue(Resource.loading(null))
@@ -54,7 +54,10 @@ class MainViewModel : ViewModel() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ imageList ->
-                    images.postValue(Resource.success(imageList))
+                    innerList.addAll(imageList.hits)
+                    allImages.value = innerList
+                    allImages.postValue(allImages.value)
+//                    images.postValue(Resource.success(imageList))
                     if (page == 1 && imageList.hits.size == 0) {
                         emptyList.postValue(true)
                     } else {
@@ -76,15 +79,12 @@ class MainViewModel : ViewModel() {
                     )
                 })
         )
-
     }
-
 
     fun loadMore(input: String) {
         page++
         fetchImages(input, false)
     }
-
 
     override fun onCleared() {
         super.onCleared()
@@ -93,6 +93,10 @@ class MainViewModel : ViewModel() {
 
     fun getImages(): LiveData<Resource<PixabayData>> {
         return images
+    }
+
+    fun getAllImages(): LiveData<List<PixabayHitsData>> {
+        return allImages
     }
 
     fun getPageStatus(): LiveData<Boolean> {
@@ -104,4 +108,5 @@ class MainViewModel : ViewModel() {
 
         return emptyList
     }
+
 }
