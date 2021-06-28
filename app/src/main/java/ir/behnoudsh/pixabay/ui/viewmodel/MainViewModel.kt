@@ -17,6 +17,9 @@ import java.net.ConnectException
 import java.net.UnknownHostException
 import javax.inject.Inject
 
+/**
+ * ViewModel holds the UI data in a life conscious way
+ */
 
 class MainViewModel : ViewModel() {
     var searchWord = ObservableField<String>()

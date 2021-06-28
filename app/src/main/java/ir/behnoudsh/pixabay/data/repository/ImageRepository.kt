@@ -7,6 +7,9 @@ import ir.behnoudsh.pixabay.di.component.ApiHelperComponent
 import ir.behnoudsh.pixabay.di.component.DaggerApiHelperComponent
 import javax.inject.Inject
 
+/**
+ * Repository class which has the duty of getting data from network and passes the data to the viewmodel
+ */
 class ImageRepository : OutputRepository {
 
     @Inject

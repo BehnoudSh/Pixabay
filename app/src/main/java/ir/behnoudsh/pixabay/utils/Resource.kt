@@ -1,5 +1,9 @@
 package ir.behnoudsh.pixabay.utils
 
+/**
+ * Base class for generating different responses and messages
+ */
+
 data class Resource<out T>(val status: Status, val data: T?, val message: String?) {
 
     companion object {

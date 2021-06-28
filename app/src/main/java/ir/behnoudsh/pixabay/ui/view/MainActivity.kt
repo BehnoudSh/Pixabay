@@ -23,7 +23,10 @@ import ir.behnoudsh.pixabay.ui.adapter.TagClickListener
 import ir.behnoudsh.pixabay.ui.viewmodel.MainViewModel
 import ir.behnoudsh.pixabay.utils.Status
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.item_image.*
+
+/**
+ * Main view of the app which is compatible in both portrait and landscape
+ */
 
 class MainActivity :
     AppCompatActivity(),
