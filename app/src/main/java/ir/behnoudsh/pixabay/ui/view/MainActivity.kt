@@ -1,8 +1,10 @@
 package ir.behnoudsh.pixabay.ui.view
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +23,7 @@ import ir.behnoudsh.pixabay.ui.adapter.TagClickListener
 import ir.behnoudsh.pixabay.ui.viewmodel.MainViewModel
 import ir.behnoudsh.pixabay.utils.Status
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.item_image.*
 
 class MainActivity :
     AppCompatActivity(),
@@ -34,6 +37,11 @@ class MainActivity :
     val adapterFood = mutableListOf<PixabayHitsData>()
 
     lateinit var mainViewModel: MainViewModel
+    fun View.hideKeyboard() {
+        val inputMethodManager =
+            context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +55,14 @@ class MainActivity :
         databinding.imagesViewModel = mainViewModel
         databinding.lifecycleOwner = this
 
+        hideSoftKeyboard()
+
+    }
+
+    private fun hideSoftKeyboard() {
+        Handler().postDelayed({
+            iv_search.hideKeyboard()
+        }, 1000)
     }
 
     private fun renderList(imagess: List<PixabayHitsData>) {
@@ -54,8 +70,6 @@ class MainActivity :
         adapterFood.addAll(imagess)
         adapter.updateList(imagess as ArrayList<PixabayHitsData>)
         adapter.notifyDataSetChanged()
-
-
     }
 
     private fun setupUI() {
@@ -70,6 +84,7 @@ class MainActivity :
         et_searchword.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 mainViewModel.fetchImages(et_searchword.text.toString(), true)
+                hideSoftKeyboard()
                 true
             } else {
                 false
@@ -78,7 +93,6 @@ class MainActivity :
     }
 
     private fun setupViewModel() {
-
         mainViewModel = ViewModelProviders.of(this)[MainViewModel::class.java]
     }
 
@@ -118,7 +132,6 @@ class MainActivity :
             }
         })
 
-
         mainViewModel.getPageStatus().observe(this, Observer {
             adapterFood.clear()
         })
@@ -153,6 +166,7 @@ class MainActivity :
             Snackbar.LENGTH_INDEFINITE
         ).setAction("retry") {
             mainViewModel.fetchImages(et_searchword.text.toString(), false)
+            hideSoftKeyboard()
         }
         val snackbarView = snackbar.view
         val textView =
@@ -164,5 +178,7 @@ class MainActivity :
     override fun onTagClickListener(tag: String) {
         et_searchword.setText(tag)
         mainViewModel.fetchImages(tag, true)
+        hideSoftKeyboard()
     }
+
 }
