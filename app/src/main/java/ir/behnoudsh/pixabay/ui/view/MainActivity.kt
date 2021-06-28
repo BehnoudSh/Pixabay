@@ -37,6 +37,7 @@ class MainActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         databinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         setupUI()
